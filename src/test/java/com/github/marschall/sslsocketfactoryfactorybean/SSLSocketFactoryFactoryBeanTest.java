@@ -10,24 +10,28 @@ import javax.net.ssl.SSLSocketFactory;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.FactoryBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.web.client.RestOperations;
 import org.springframework.web.client.RestTemplate;
 
 @SpringJUnitConfig
+@TestPropertySource(properties = {
+    "truststore.type=PKCS12",
+    "truststore.location=target/generated-truststores/bad-ssl.p12",
+    "truststore.password=changeit",
+    "tls.protocol=TLSv1.2"
+})
 class SSLSocketFactoryFactoryBeanTest {
 
+  @Autowired
   private RestOperations restOperations;
-
-  @Test
-  void expired() {
-    String expired = this.restOperations.getForObject("https://expired.badssl.com/", String.class);
-    assertNotNull(expired);
-  }
 
   @Test
   void selfSigned() {
@@ -43,6 +47,18 @@ class SSLSocketFactoryFactoryBeanTest {
 
   @Configuration
   static class SSLConfiguration {
+
+    @Value("${truststore.type}")
+    private String truststoreType;
+
+    @Value("${truststore.location}")
+    private String truststoreLocation;
+
+    @Value("${truststore.password}")
+    private String truststorePassword;
+
+    @Value("${tls.protocol}")
+    private String protocol;
 
     @Bean
     RestOperations restTemplate(SSLSocketFactory sslSocketFactory) {
@@ -62,6 +78,10 @@ class SSLSocketFactoryFactoryBeanTest {
     @Bean
     FactoryBean<SSLSocketFactory> sslSocketFactory() {
       SSLSocketFactoryFactoryBean factoryBean = new SSLSocketFactoryFactoryBean();
+      factoryBean.setTruststoreType(this.truststoreType);
+      factoryBean.setTruststoreLocation(this.truststoreLocation);
+      factoryBean.setTruststorePassword(this.truststorePassword);
+      factoryBean.setProtocol(this.protocol);
       return factoryBean;
     }
 

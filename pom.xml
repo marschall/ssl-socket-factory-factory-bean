@@ -98,6 +98,23 @@
           <arguments>-Pdeploy-to-sonatype-oss</arguments>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>com.github.marschall</groupId>
+        <artifactId>truststore-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>generate-truststore</id>
+            <phase>generate-test-sources</phase>
+            <goals>
+              <goal>pkcs12-inplace</goal>
+            </goals>
+            <configuration>
+              <finalName>bad-ssl</finalName>
+              <sourceDirectory>src/test/resources/certificates</sourceDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
     <pluginManagement>
       <plugins>
@@ -158,6 +175,11 @@
           <artifactId>maven-surefire-plugin</artifactId>
           <version>2.22.2</version>
         </plugin>
+        <plugin>
+          <groupId>com.github.marschall</groupId>
+          <artifactId>truststore-maven-plugin</artifactId>
+          <version>0.3.0</version>
+      </plugin>
         <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself. -->
         <plugin>
           <groupId>org.eclipse.m2e</groupId>
@@ -192,7 +214,7 @@
       <dependency>
         <groupId>org.junit</groupId>
         <artifactId>junit-bom</artifactId>
-        <version>5.7.0</version>
+        <version>5.7.1</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -218,6 +240,7 @@
       <groupId>net.bytebuddy</groupId>
       <artifactId>byte-buddy</artifactId>
       <version>1.10.20</version>
+      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
