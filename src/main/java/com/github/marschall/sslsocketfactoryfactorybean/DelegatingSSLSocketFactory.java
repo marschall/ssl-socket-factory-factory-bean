@@ -28,8 +28,10 @@ class DelegatingSSLSocketFactory extends SSLSocketFactory {
 
   private final Supplier<SSLSocketFactory> delegateSupplier;
   private final String[] cipherSuites;
+  private final String[] protocols;
 
-  DelegatingSSLSocketFactory(@NonNull Supplier<SSLSocketFactory> delegateSupplier, @Nullable String[] cipherSuites) {
+  DelegatingSSLSocketFactory(@NonNull Supplier<SSLSocketFactory> delegateSupplier, @Nullable String[] cipherSuites, @Nullable String[] protocols) {
+    this.protocols = protocols;
     Objects.requireNonNull(delegateSupplier);
     this.delegateSupplier = delegateSupplier;
     this.cipherSuites = cipherSuites;
@@ -62,6 +64,9 @@ class DelegatingSSLSocketFactory extends SSLSocketFactory {
       SSLSocket sslSocket = (SSLSocket) socket;
       if (this.cipherSuites != null) {
         sslSocket.setEnabledCipherSuites(this.cipherSuites);
+      }
+      if (this.protocols != null) {
+        sslSocket.setEnabledProtocols(this.protocols);
       }
     }
     return socket;

@@ -250,4 +250,12 @@ public abstract class AbstractSSLSocketFactoryFactoryBean implements ResourceLoa
     }
   }
 
+  String[] getProtocolsArray() {
+    if (this.protocol != null) {
+      return new String[] {this.protocol};
+    } else {
+      return null;
+    }
+  }
+
 }

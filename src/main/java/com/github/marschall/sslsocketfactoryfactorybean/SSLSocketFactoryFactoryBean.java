@@ -12,7 +12,8 @@ public final class SSLSocketFactoryFactoryBean extends AbstractSSLSocketFactoryF
   public SSLSocketFactory getObject() {
     Supplier<SSLSocketFactory> sslSocketFactorySupplier = this.createSslSocketFactorySupplier();
     String[] cipherSuites = this.getCipherSuitesArray();
-    return new DelegatingSSLSocketFactory(sslSocketFactorySupplier, cipherSuites);
+    String[] protocols = this.getProtocolsArray();
+    return new DelegatingSSLSocketFactory(sslSocketFactorySupplier, cipherSuites, protocols);
   }
 
   @Override
