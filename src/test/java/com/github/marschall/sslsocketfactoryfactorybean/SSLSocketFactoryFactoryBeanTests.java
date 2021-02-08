@@ -28,7 +28,7 @@ import org.springframework.web.client.RestTemplate;
     "truststore.location=file:target/generated-truststores/bad-ssl.p12",
     "truststore.password=changeit"
 })
-class SSLSocketFactoryFactoryBeanTest {
+class SSLSocketFactoryFactoryBeanTests {
 
   @Autowired
   private RestOperations restOperations;
@@ -79,7 +79,7 @@ class SSLSocketFactoryFactoryBeanTest {
       factoryBean.setTruststoreLocation(this.truststoreLocation);
       factoryBean.setTruststorePassword(this.truststorePassword);
       factoryBean.setProtocol("TLSv1.2");
-      // defaut supports TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+      // default supports TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
       factoryBean.setCipherSuites(Collections.singletonList("TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384"));
       return factoryBean;
     }
