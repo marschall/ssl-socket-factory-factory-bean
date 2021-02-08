@@ -67,6 +67,9 @@ class SSLSocketFactoryClassFactoryBeanTests {
     Object defaultSocketFactory = method.invoke(null);
     assertNotNull(defaultSocketFactory);
     assertSame(this.socketFactoryClass, defaultSocketFactory.getClass());
+
+    // second invocation returns the same class
+    assertSame(defaultSocketFactory, method.invoke(null));
   }
   @Configuration
   static class SSLConfiguration {
