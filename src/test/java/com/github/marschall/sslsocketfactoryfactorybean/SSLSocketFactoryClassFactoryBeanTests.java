@@ -14,7 +14,6 @@ import java.util.Collections;
 import javax.net.SocketFactory;
 import javax.net.ssl.SSLSocketFactory;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +23,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
-@Disabled("implementation not ready")
 @SpringJUnitConfig
 @TestPropertySource(properties = {
     "truststore.type=PKCS12",
@@ -55,21 +53,34 @@ class SSLSocketFactoryClassFactoryBeanTests {
 
     // public static SocketFactory getDefault()
     Method[] methods = this.socketFactoryClass.getDeclaredMethods();
-    assertEquals(1, methods.length, "method count");
-    Method method = methods[0];
-    int methodModifiers = method.getModifiers();
-    assertTrue(Modifier.isPublic(methodModifiers));
-    assertTrue(Modifier.isStatic(methodModifiers));
-    assertEquals("getDefault", method.getName(), "method name");
-    assertEquals(0, method.getParameterCount());
-    assertEquals(SocketFactory.class, method.getReturnType());
+//    assertEquals(2, methods.length, "method count");
+    Method getDefault = null;
+    for (Method method : methods) {
+      if (method.getName().equals("getDefault")) {
+        int methodModifiers = method.getModifiers();
+        assertTrue(Modifier.isPublic(methodModifiers));
+        assertTrue(Modifier.isStatic(methodModifiers));
+        assertEquals(0, method.getParameterCount());
+        assertEquals(SocketFactory.class, method.getReturnType());
+        getDefault = method;
+      } else if (method.getName().equals("setDefault")) {
+        int methodModifiers = method.getModifiers();
+        assertFalse(Modifier.isPublic(methodModifiers));
+        assertTrue(Modifier.isStatic(methodModifiers));
+        assertEquals(1, method.getParameterCount());
+        assertEquals(Void.TYPE, method.getReturnType());
+      } else {
+        // ignore
+      }
+    }
 
-    Object defaultSocketFactory = method.invoke(null);
+    assertNotNull(getDefault);
+    Object defaultSocketFactory = getDefault.invoke(null);
     assertNotNull(defaultSocketFactory);
     assertSame(this.socketFactoryClass, defaultSocketFactory.getClass());
 
     // second invocation returns the same class
-    assertSame(defaultSocketFactory, method.invoke(null));
+    assertSame(defaultSocketFactory, getDefault.invoke(null));
   }
   @Configuration
   static class SSLConfiguration {

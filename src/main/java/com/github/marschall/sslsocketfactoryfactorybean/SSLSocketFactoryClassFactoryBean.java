@@ -1,11 +1,14 @@
 package com.github.marschall.sslsocketfactoryfactorybean;
 
 import java.lang.invoke.MethodHandles;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.util.function.Supplier;
 
 import javax.net.SocketFactory;
 import javax.net.ssl.SSLSocketFactory;
 
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.FactoryBean;
 
 import net.bytebuddy.ByteBuddy;
@@ -23,19 +26,33 @@ public final class SSLSocketFactoryClassFactoryBean extends AbstractSSLSocketFac
   @Override
   public Class<? extends SSLSocketFactory> getObject() {
     // TODO verify required properties
-    // TODO cache instance?
     Supplier<SSLSocketFactory> sslSocketFactorySupplier = this.createSslSocketFactorySupplier();
-    Class<?> dynamicType = new ByteBuddy()
+    String[] cipherSuites = this.getCipherSuitesArray();
+    String[] protocols = this.getProtocolsArray();
+    String defaultFieldName = "defaultInstance";
+    Class<?> sockeFactoryClass = new ByteBuddy()
             .subclass(DelegatingSSLSocketFactory.class, ConstructorStrategy.Default.IMITATE_SUPER_CLASS)
             .modifiers(Visibility.PUBLIC, TypeManifestation.FINAL)
-            .defineField("defaultInstance", SocketFactory.class, Visibility.PRIVATE, Ownership.STATIC, FieldManifestation.FINAL)
-//            .initializer(MethodCall.construct(null))
+            .defineField(defaultFieldName, SocketFactory.class, Visibility.PRIVATE, Ownership.STATIC, FieldManifestation.VOLATILE)
             .defineMethod("getDefault", SocketFactory.class, Visibility.PUBLIC, Ownership.STATIC, MethodArguments.PLAIN)
-            .intercept(FieldAccessor.ofField("defaultInstance"))
+              .intercept(FieldAccessor.ofField(defaultFieldName))
+            .defineMethod("setDefault", Void.TYPE, Visibility.PACKAGE_PRIVATE, Ownership.STATIC, MethodArguments.PLAIN)
+              .withParameter(SocketFactory.class)
+            .intercept(FieldAccessor.ofField(defaultFieldName).setsArgumentAt(0))
             .make()
             .load(this.getClass().getClassLoader(), UsingLookup.of(MethodHandles.lookup()))
             .getLoaded();
-    return dynamicType.asSubclass(SSLSocketFactory.class);
+
+    try {
+      Constructor<?> socketFactoryContructor = sockeFactoryClass.getDeclaredConstructor(Supplier.class, String[].class, String[].class);
+      Method setDefault = sockeFactoryClass.getDeclaredMethod("setDefault", SocketFactory.class);
+      Object defaultInstance = socketFactoryContructor.newInstance(sslSocketFactorySupplier, cipherSuites, protocols);
+      setDefault.invoke(null, defaultInstance);
+    } catch (ReflectiveOperationException e) {
+      throw new BeanCreationException("could not initialize default instance", e);
+    }
+
+    return sockeFactoryClass.asSubclass(SSLSocketFactory.class);
   }
 
   @Override
