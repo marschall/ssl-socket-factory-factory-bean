@@ -1,7 +1,7 @@
 package com.github.marschall.sslsocketfactoryfactorybean;
 
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
@@ -18,9 +18,12 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 
 import org.springframework.beans.factory.BeanCreationException;
+import org.springframework.context.ResourceLoaderAware;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.lang.Nullable;
 
-public abstract class AbstractSSLSocketFactoryFactoryBean {
+public abstract class AbstractSSLSocketFactoryFactoryBean implements ResourceLoaderAware {
 
   private boolean lazyInit;
   @Nullable
@@ -40,9 +43,16 @@ public abstract class AbstractSSLSocketFactoryFactoryBean {
   @Nullable
   private List<String> cipherSuites;
 
+  private ResourceLoader resourceLoader;
+
   AbstractSSLSocketFactoryFactoryBean() {
     // prevent subclassing from outside the package
     super();
+  }
+
+  @Override
+  public void setResourceLoader(ResourceLoader resourceLoader) {
+    this.resourceLoader = resourceLoader;
   }
 
   public boolean isLazyInit() {
@@ -131,14 +141,14 @@ public abstract class AbstractSSLSocketFactoryFactoryBean {
   }
 
   private KeyStore loadTrustStore() {
-    return loadKeyStore(this.truststoreType, this.truststoreLocation, this.truststorePassword);
+    return this.loadKeyStore(this.truststoreType, this.truststoreLocation, this.truststorePassword);
   }
 
   private KeyStore loadKeyStore() {
-    return loadKeyStore(this.keystroreType, this.keystroreLocation, this.keystrorePass);
+    return this.loadKeyStore(this.keystroreType, this.keystroreLocation, this.keystrorePass);
   }
 
-  private static KeyStore loadKeyStore(String type, String location, String pass) {
+  private KeyStore loadKeyStore(String type, String location, String pass) {
     if (location == null) {
       return null;
     }
@@ -149,9 +159,10 @@ public abstract class AbstractSSLSocketFactoryFactoryBean {
     } catch (KeyStoreException e) {
       throw new BeanCreationException("Could not create key store of type: " + typeToUse, e);
     }
-    try (FileInputStream fileInputStream = new FileInputStream(location)) {
+    Resource resource = this.resourceLoader.getResource(location);
+    try (InputStream inputStream = resource.getInputStream()) {
       char[] password = pass == null ? null : pass.toCharArray();
-      keyStore.load(fileInputStream, password);
+      keyStore.load(inputStream, password);
     } catch (GeneralSecurityException | IOException e) {
       throw new BeanCreationException("Could not load key store from: " + location, e);
     }
@@ -219,18 +230,12 @@ public abstract class AbstractSSLSocketFactoryFactoryBean {
       throw new RuntimeException("Could not initialize ssl context", e);
     }
 
-    String[] cipherSuitesArray = this.getCipherSuitesArray();
-    if (cipherSuitesArray != null) {
-      sslContext.getSupportedSSLParameters().setCipherSuites(cipherSuitesArray);
-      sslContext.getDefaultSSLParameters().setCipherSuites(cipherSuitesArray);
-    }
-
     return sslContext;
   }
 
   Supplier<SSLSocketFactory> createSslSocketFactorySupplier() {
     if (this.lazyInit) {
-      return new LazySupplier<>(() -> this.createConfiguredSslContext().getSocketFactory());
+      return new LazyValue<>(() -> this.createConfiguredSslContext().getSocketFactory());
     } else {
       SSLSocketFactory socketFactory = this.createConfiguredSslContext().getSocketFactory();
       return () -> socketFactory;

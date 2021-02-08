@@ -8,10 +8,12 @@ import java.util.function.Supplier;
 
 /**
  * A lazily computed value.
+ * <p>
+ * Instances of this class are thread-safe.
  *
  * @param <T> the type of results supplied by this supplier
  */
-final class LazySupplier<T> implements Supplier<T> {
+final class LazyValue<T> implements Supplier<T> {
 
   private final Supplier<T> delegate;
 
@@ -23,7 +25,15 @@ final class LazySupplier<T> implements Supplier<T> {
   private final ReentrantReadWriteLock lock;
   private T value;
 
-  LazySupplier(Supplier<T> delegate) {
+  /**
+   * Constructs a new {@link LazyValue}.
+   *
+   * @param delegate the supplier to supply the actual value,
+   *        must not be {@code null},
+   *        must not return {@code null}
+   */
+  LazyValue(Supplier<T> delegate) {
+    Objects.requireNonNull(delegate);
     this.delegate = delegate;
     this.lock = new ReentrantReadWriteLock();
   }

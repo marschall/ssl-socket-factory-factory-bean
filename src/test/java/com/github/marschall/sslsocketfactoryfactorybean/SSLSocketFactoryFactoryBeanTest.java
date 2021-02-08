@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.util.Collections;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSocketFactory;
@@ -24,9 +25,8 @@ import org.springframework.web.client.RestTemplate;
 @SpringJUnitConfig
 @TestPropertySource(properties = {
     "truststore.type=PKCS12",
-    "truststore.location=target/generated-truststores/bad-ssl.p12",
-    "truststore.password=changeit",
-    "tls.protocol=TLSv1.2"
+    "truststore.location=file:target/generated-truststores/bad-ssl.p12",
+    "truststore.password=changeit"
 })
 class SSLSocketFactoryFactoryBeanTest {
 
@@ -57,9 +57,6 @@ class SSLSocketFactoryFactoryBeanTest {
     @Value("${truststore.password}")
     private String truststorePassword;
 
-    @Value("${tls.protocol}")
-    private String protocol;
-
     @Bean
     RestOperations restTemplate(SSLSocketFactory sslSocketFactory) {
       ClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory() {
@@ -81,7 +78,9 @@ class SSLSocketFactoryFactoryBeanTest {
       factoryBean.setTruststoreType(this.truststoreType);
       factoryBean.setTruststoreLocation(this.truststoreLocation);
       factoryBean.setTruststorePassword(this.truststorePassword);
-      factoryBean.setProtocol(this.protocol);
+      factoryBean.setProtocol("TLSv1.2");
+      // defaut supports TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+      factoryBean.setCipherSuites(Collections.singletonList("TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384"));
       return factoryBean;
     }
 
