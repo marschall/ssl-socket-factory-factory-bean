@@ -4,7 +4,7 @@
 
   <groupId>com.github.marschall</groupId>
   <artifactId>ssl-socket-factory-factory-bean</artifactId>
-  <version>0.3.0-SNAPSHOT</version>
+  <version>0.1.0-SNAPSHOT</version>
   <inceptionYear>2020</inceptionYear>
   <url>https://github.com/marschall/ssl-socket-factory-factory-bean</url>
   <name>SSLSocketFactory FactoryBean</name>

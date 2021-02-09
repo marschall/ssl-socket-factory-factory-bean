@@ -1,6 +1,7 @@
 package com.github.marschall.sslsocketfactoryfactorybean;
 
 import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodHandles.Lookup;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.function.Supplier;
@@ -21,11 +22,23 @@ import net.bytebuddy.dynamic.loading.ClassLoadingStrategy.UsingLookup;
 import net.bytebuddy.dynamic.scaffold.subclass.ConstructorStrategy;
 import net.bytebuddy.implementation.FieldAccessor;
 
+/**
+ * A {@link FactoryBean} that creates a {@link SSLSocketFactory} class.
+ *
+ * <h2>Implementation Note</h2>
+ * The class is generated in the same package as this class using {@link Lookup#defineClass(byte[])}.
+ */
 public final class SSLSocketFactoryClassFactoryBean extends AbstractSSLSocketFactoryFactoryBean implements FactoryBean<Class<? extends SSLSocketFactory>> {
+
+  /**
+   * Default constructor.
+   */
+  public SSLSocketFactoryClassFactoryBean() {
+    super();
+  }
 
   @Override
   public Class<? extends SSLSocketFactory> getObject() {
-    // TODO verify required properties
     Supplier<SSLSocketFactory> sslSocketFactorySupplier = this.createSslSocketFactorySupplier();
     String[] cipherSuites = this.getCipherSuitesArray();
     String[] protocols = this.getProtocolsArray();

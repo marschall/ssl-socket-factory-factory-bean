@@ -6,7 +6,17 @@ import javax.net.ssl.SSLSocketFactory;
 
 import org.springframework.beans.factory.FactoryBean;
 
+/**
+ * A {@link FactoryBean} that creates a {@link SSLSocketFactory}.
+ */
 public final class SSLSocketFactoryFactoryBean extends AbstractSSLSocketFactoryFactoryBean implements FactoryBean<SSLSocketFactory> {
+
+  /**
+   * Default constructor.
+   */
+  public SSLSocketFactoryFactoryBean() {
+    super();
+  }
 
   @Override
   public SSLSocketFactory getObject() {
