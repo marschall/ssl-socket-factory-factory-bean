@@ -81,6 +81,8 @@ public abstract class AbstractSSLSocketFactoryFactoryBean implements ResourceLoa
    * that discovery of configuration errors, eg. a wrong keystore
    * password, is also delayed until the {@link SSLSocket} is created.
    * <p>
+   * Not to be confused with {@link org.springframework.beans.factory.SmartFactoryBean#isEagerInit()}
+   * <p>
    * Default is {@code false}.
    *
    * @param lazyInit whether the {@link SSLContext} should be lazily
@@ -231,13 +233,19 @@ public abstract class AbstractSSLSocketFactoryFactoryBean implements ResourceLoa
     this.protocol = protocol;
   }
 
+  /**
+   * Gets the cipher suites to use.
+   *
+   * @return the cipher suites to use
+   */
   public List<String> getCipherSuites() {
     return this.cipherSuites;
   }
 
   /**
+   * Sets the cipher suites to use.
    *
-   * @param cipherSuites
+   * @param cipherSuites the cipher suites to use
    * @see SSLSocket#setEnabledCipherSuites(String[])
    */
   public void setCipherSuites(List<String> cipherSuites) {
