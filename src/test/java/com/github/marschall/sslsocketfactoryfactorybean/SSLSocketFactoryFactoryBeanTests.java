@@ -58,6 +58,18 @@ class SSLSocketFactoryFactoryBeanTests {
     private String truststorePassword;
 
     @Bean
+    FactoryBean<SSLSocketFactory> sslSocketFactory() {
+      SSLSocketFactoryFactoryBean factoryBean = new SSLSocketFactoryFactoryBean();
+      factoryBean.setTruststoreType(this.truststoreType);
+      factoryBean.setTruststoreLocation(this.truststoreLocation);
+      factoryBean.setTruststorePassword(this.truststorePassword);
+      factoryBean.setProtocol("TLSv1.2");
+      // default supports TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+      factoryBean.setCipherSuites(Collections.singletonList("TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384"));
+      return factoryBean;
+    }
+
+    @Bean
     RestOperations restTemplate(SSLSocketFactory sslSocketFactory) {
       ClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory() {
         @Override
@@ -70,18 +82,6 @@ class SSLSocketFactoryFactoryBeanTests {
         }
       };
       return new RestTemplate(requestFactory);
-    }
-
-    @Bean
-    FactoryBean<SSLSocketFactory> sslSocketFactory() {
-      SSLSocketFactoryFactoryBean factoryBean = new SSLSocketFactoryFactoryBean();
-      factoryBean.setTruststoreType(this.truststoreType);
-      factoryBean.setTruststoreLocation(this.truststoreLocation);
-      factoryBean.setTruststorePassword(this.truststorePassword);
-      factoryBean.setProtocol("TLSv1.2");
-      // default supports TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-      factoryBean.setCipherSuites(Collections.singletonList("TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384"));
-      return factoryBean;
     }
 
   }
