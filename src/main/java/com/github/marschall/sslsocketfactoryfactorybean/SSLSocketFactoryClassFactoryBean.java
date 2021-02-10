@@ -49,7 +49,7 @@ public final class SSLSocketFactoryClassFactoryBean extends AbstractSSLSocketFac
             .defineField(defaultFieldName, SocketFactory.class, Visibility.PRIVATE, Ownership.STATIC, FieldManifestation.VOLATILE)
             .defineMethod("getDefault", SocketFactory.class, Visibility.PUBLIC, Ownership.STATIC, MethodArguments.PLAIN)
               .intercept(FieldAccessor.ofField(defaultFieldName))
-            .defineMethod("setDefault", Void.TYPE, Visibility.PACKAGE_PRIVATE, Ownership.STATIC, MethodArguments.PLAIN)
+           .defineMethod("setDefault", Void.TYPE, Visibility.PACKAGE_PRIVATE, Ownership.STATIC, MethodArguments.PLAIN)
               .withParameter(SocketFactory.class)
             .intercept(FieldAccessor.ofField(defaultFieldName).setsArgumentAt(0))
             .make()
