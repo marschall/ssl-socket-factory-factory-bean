@@ -1,4 +1,4 @@
-SSLSocketFactory FactoryBean
+SSLSocketFactory FactoryBean [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.marschall/ssl-socket-factory-factory-bean/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.marschall/ssl-socket-factory-factory-bean) [![Build Status](https://travis-ci.org/marschall/ssl-socket-factory-factory-bean.svg?branch=master)](https://travis-ci.org/marschall/ssl-socket-factory-factory-bean)
 ============================
 
 A Spring [FactoryBean](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/beans/factory/FactoryBean.html) for a [SSLSocketFactory](https://docs.oracle.com/en/java/javase/11/docs/api/java.base/javax/net/ssl/SSLSocketFactory.html) or `SSLSocketFactory` class.
