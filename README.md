@@ -67,3 +67,5 @@ To easily verify that all configuration options are passed as desired use
 ```
 -Djavax.net.debug=ssl:handshake
 ```
+
+You may also want to check out [sslcontext-kickstart](https://github.com/Hakky54/sslcontext-kickstart)
