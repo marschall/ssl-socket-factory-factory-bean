@@ -7,6 +7,14 @@ Sometimes a framework or library does not support configuring SSL parameters lik
 
 This project has an optional dependency on [Byte Buddy](https://bytebuddy.net/) which is needed when a `SSLSocketFactory` class rather than a `SSLSocketFactory` is desired, eg for `com.sun.jndi.ldap.LdapCtx#SOCKET_FACTORY`.
 
+```xml
+<dependency>
+  <groupId>com.github.marschall</groupId>
+  <artifactId>ssl-socket-factory-factory-bean</artifactId>
+  <version>0.1.0</version>
+</dependency>
+```
+
 Usage
 -----
 
