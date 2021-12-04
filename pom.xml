@@ -9,7 +9,7 @@
   <url>https://github.com/marschall/ssl-socket-factory-factory-bean</url>
   <name>SSLSocketFactory FactoryBean</name>
   <description>A Spring FactoryBean for an SSLSocketFactory.</description>
-  
+
   <developers>
     <developer>
       <id>marschall</id>
@@ -22,7 +22,7 @@
       </roles>
     </developer>
   </developers>
-  
+
   <licenses>
     <license>
       <name>MIT</name>
@@ -40,7 +40,7 @@
     <url>https://github.com/marschall/ssl-socket-factory-factory-bean/issues</url>
     <system>GitHub Issues</system>
   </issueManagement>
-  
+
   <scm>
     <connection>scm:git:git@github.com:marschall/ssl-socket-factory-factory-bean.git</connection>
     <developerConnection>scm:git:git@github.com:marschall/ssl-socket-factory-factory-bean.git</developerConnection>
@@ -200,14 +200,14 @@
       <dependency>
         <groupId>org.junit</groupId>
         <artifactId>junit-bom</artifactId>
-        <version>5.8.1</version>
+        <version>5.8.2</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
       <dependency>
         <groupId>org.springframework</groupId>
         <artifactId>spring-framework-bom</artifactId>
-        <version>5.3.11</version>
+        <version>5.3.13</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -225,7 +225,7 @@
     <dependency>
       <groupId>net.bytebuddy</groupId>
       <artifactId>byte-buddy</artifactId>
-      <version>1.11.20</version>
+      <version>1.12.3</version>
       <optional>true</optional>
     </dependency>
     <dependency>
@@ -270,7 +270,6 @@
     </dependency>
   </dependencies>
 
-
   <distributionManagement>
     <snapshotRepository>
       <id>sonatype-nexus-snapshots</id>
@@ -283,7 +282,7 @@
       <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
     </repository>
   </distributionManagement>
-  
+
   <profiles>
     <profile>
       <id>deploy-to-sonatype-oss</id>
